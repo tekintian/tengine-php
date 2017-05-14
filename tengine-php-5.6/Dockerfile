@@ -1,4 +1,4 @@
-FROM daocloud.io/library/php:5.6.9-fpm
+FROM tekintian/php:5.6
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
