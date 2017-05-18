@@ -2,7 +2,7 @@
 set -e
 
 # reset memory
-PHP_INSTALL_DIR=/usr/local/php53
+PHP_INSTALL_DIR=/usr/local
 Mem=`free -m | awk '/Mem:/{print $2}'`
 if [ $Mem -le 640 ];then
     MEMORY_LIMIT=64

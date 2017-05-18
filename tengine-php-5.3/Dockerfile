@@ -1,4 +1,4 @@
-FROM tekintian/php:5.3
+FROM magentoomitsis/php5.3:latest
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
