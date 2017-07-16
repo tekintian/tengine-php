@@ -1,4 +1,4 @@
-FROM tekintian/php:7.0
+FROM tekintian/php:7.0.21
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
