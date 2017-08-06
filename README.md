@@ -1,13 +1,13 @@
 #tengine-php for docker
 
-docker pull tekintian/tengine-php:5.6
+docker pull tekintian/tengine-php:5.5
 
-tengine + php 5.6.31
+tengine + php 5.5
 
 
 ## description
 
-Nginx(Tengine) + PHP 7.1.x
+Nginx(Tengine) + PHP 5.5.x
 ImageMagick + ZendOpcache
 Memcache + Memcached + Redis
 ZendGuardLoader + ionCube
@@ -24,11 +24,11 @@ docker run --name tengine-php -it -d \
  -v /mywork/vhost/nginx.conf:/usr/local/tengine/conf/nginx.conf \
  -v /mywork/vhost/tengine:/usr/local/tengine/conf/vhost \
  --restart=always \
- tekintian/tengine-php:7.0
+ tekintian/tengine-php:5.5
 
 ### run with  windows10 docker container  /E/mywork/ 为DOCKER容器共享后的宿主机 E盘下的mywork目录
 
-docker run --name tengine-php -it -d  -p 80:80 -p 443:443 -v /E/mywork/wwwroot:/home/wwwroot -v /E/mywork/logs:/home/wwwlogs -v /E/mywork/vhost/nginx.conf:/usr/local/tengine/conf/nginx.conf -v /E/mywork/vhost/tengine:/usr/local/tengine/conf/vhost --restart=always tekintian/tengine-php:7.0
+docker run --name tengine-php -it -d  -p 80:80 -p 443:443 -v /E/mywork/wwwroot:/home/wwwroot -v /E/mywork/logs:/home/wwwlogs -v /E/mywork/vhost/nginx.conf:/usr/local/tengine/conf/nginx.conf -v /E/mywork/vhost/tengine:/usr/local/tengine/conf/vhost --restart=always tekintian/tengine-php:5.5
 
 
 
