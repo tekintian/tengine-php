@@ -1,11 +1,11 @@
-FROM tekintian/php:7.1.8
+FROM magentoomitsis/php5.3:latest
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.0 \
     PCRE_VERSION=8.39 \
     OPENSSL_VERSION=1.0.2j \
-    RUN_USER=www \
+    RUN_USER=www-data \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
     REMOTE_PATH=https://github.com/tekintian/docker-php-nginx/raw/master
@@ -13,7 +13,18 @@ ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
 WORKDIR /tmp
 
 # install tengine
-RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+RUN apt-get install -y  bzip2 && \
+    wget http://mirrors.linuxeye.com/oneinstack/src/jemalloc-4.4.0.tar.bz2 && \
+    tar -xjf jemalloc-4.4.0.tar.bz2 && \
+    cd jemalloc-4.4.0 && \
+    ./configure --prefix=/usr/local/jemalloc --libdir=/usr/local/lib && \
+    make && make install && \
+    make clean && \
+    cd ../ && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
+    /sbin/ldconfig 
+
+RUN  wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
@@ -43,10 +54,12 @@ RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programm
     make && make install && \
     mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
     touch ${WEBSERVER_INSTALL_DIR}/conf/rewrite/none.conf && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* && \
+    apt-get remove -y bzip2 && \
+    apt-get autoremove -y
 
-ADD ${REMOTE_PATH}/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
-ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
+ADD nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD nginx-init /etc/init.d/nginx
 RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
 
@@ -67,7 +80,7 @@ RUN mkdir -p ${WWWLOGS_DIR} && \
 EXPOSE 80 443
 
 # Set the entrypoint script.
-ADD ${REMOTE_PATH}/entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh /entrypoint.sh
 RUN chmod 777 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

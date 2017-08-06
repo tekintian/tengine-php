@@ -4,6 +4,7 @@ docker pull tekintian/tengine-php
 
 tengine + php latest version
 
+支持PHP 版本 php5.4--7.1 多版本
 
 ## description
 
