@@ -1,10 +1,13 @@
 #tengine-php for docker
 
-docker pull tekintian/tengine-php
+docker pull tekintian/tengine-php:7.1
+
+tengine + php 7.1.8
+
 
 ## description
 
-Nginx(Tengine) + PHP
+Nginx(Tengine) + PHP 7.1.x
 ImageMagick + ZendOpcache
 Memcache + Memcached + Redis
 ZendGuardLoader + ionCube
@@ -61,4 +64,7 @@ docker exec -d web service php-fpm restart
 
 
 
+for more info
+
+http://tekin.yunnan.ws
 
