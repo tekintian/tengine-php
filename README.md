@@ -1,13 +1,13 @@
 #tengine-php for docker
 
-docker pull tekintian/tengine-php:7.1
+docker pull tekintian/tengine-php
 
-tengine + php 7.1.8
+tengine + php latest version
 
 
 ## description
 
-Nginx(Tengine) + PHP 7.1.x
+Nginx(Tengine) + PHP latest version
 ImageMagick + ZendOpcache
 Memcache + Memcached + Redis
 ZendGuardLoader + ionCube
