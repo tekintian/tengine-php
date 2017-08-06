@@ -1,8 +1,8 @@
 #tengine-php for docker
 
-docker pull tekintian/tengine-php:7.1
+docker pull tekintian/tengine-php:7.0
 
-tengine + php 7.1.8
+tengine + php 7.0.22
 
 
 ## description
