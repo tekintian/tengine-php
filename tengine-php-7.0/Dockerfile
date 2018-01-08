@@ -1,14 +1,14 @@
-FROM tekintian/php:7.0.22
+FROM tekintian/php:7.0.27
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
-    TENGINE_VERSION=2.2.0 \
+    TENGINE_VERSION=2.2.1 \
     PCRE_VERSION=8.39 \
     OPENSSL_VERSION=1.0.2j \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
-    REMOTE_PATH=https://github.com/tekintian/docker-php-nginx/raw/master
+    
 
 WORKDIR /tmp
 
