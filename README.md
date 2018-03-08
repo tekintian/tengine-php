@@ -2,38 +2,15 @@
 
 docker pull tekintian/tengine-php
 
-tengine + php latest version
-
-支持PHP 版本 php5.4--7.1 多版本
-
 ## description
 
-Nginx(Tengine) + PHP latest version
+Nginx(Tengine) + PHP
 ImageMagick + ZendOpcache
 Memcache + Memcached + Redis
 ZendGuardLoader + ionCube
 Swoole + Workman
 
 ##usage
-
-### run alone; share folder is /mywork
-
-docker run --name tengine-php -it -d \
- -p 80:80 -p 443:443 \
- -v /mywork/wwwroot:/home/wwwroot \
- -v /mywork/wwwlogs:/home/wwwlogs \
- -v /mywork/vhost/nginx.conf:/usr/local/tengine/conf/nginx.conf \
- -v /mywork/vhost/tengine:/usr/local/tengine/conf/vhost \
- --restart=always \
- tekintian/tengine-php:7.0
-
-### run with  windows10 docker container  /E/mywork/ 为DOCKER容器共享后的宿主机 E盘下的mywork目录
-
-docker run --name tengine-php -it -d  -p 80:80 -p 443:443 -v /E/mywork/wwwroot:/home/wwwroot -v /E/mywork/logs:/home/wwwlogs -v /E/mywork/vhost/nginx.conf:/usr/local/tengine/conf/nginx.conf -v /E/mywork/vhost/tengine:/usr/local/tengine/conf/vhost --restart=always tekintian/tengine-php:7.0
-
-
-
-
 ### run with mysql
 docker run --name mysql \
            -v /home/conf/mysql:/etc/mysql/conf.d \
@@ -65,7 +42,4 @@ docker exec -d web service php-fpm restart
 
 
 
-for more info
-
-http://tekin.yunnan.ws
 

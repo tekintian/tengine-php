@@ -1,18 +1,19 @@
-FROM tekintian/php:7.0.27
+FROM tekintian/php:7.0.28
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
-    TENGINE_VERSION=2.2.1 \
-    PCRE_VERSION=8.39 \
-    OPENSSL_VERSION=1.0.2j \
+    TENGINE_VERSION=2.2.2 \
+    PCRE_VERSION=8.41 \
+    OPENSSL_VERSION=1.1.1-pre2 \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
-    
+    REMOTE_PATH=https://github.com/tekintian/docker-php-nginx/raw/master
 
 WORKDIR /tmp
 
 # install tengine
+
 RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
