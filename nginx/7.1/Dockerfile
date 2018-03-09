@@ -1,8 +1,8 @@
-FROM tekintian/php:5.6.34
-MAINTAINER Tekin Tian <tekintian@gmail.com>
+FROM tekintian/php:7.1
+MAINTAINER TekinTian <tekintian@gmail.com>
 
-ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
-    TENGINE_VERSION=2.2.2 \
+ENV WEBSERVER_INSTALL_DIR=/usr/local/nginx \
+    NGINX_VERSION=1.10.2 \
     PCRE_VERSION=8.41 \
     OPENSSL_VERSION=1.1.1-pre2 \
     RUN_USER=www \
@@ -15,40 +15,34 @@ WORKDIR /tmp
 # install tengine
 RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
-    wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
+    wget -c --no-check-certificate http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
     tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
-    tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
-    cd tengine-${TENGINE_VERSION} && \
-    # Modify Tengine version
-    #sed -i 's@TENGINE "/" TENGINE_VERSION@"nginx/unknown"@' src/core/nginx.h && \
+    tar xzf nginx-${NGINX_VERSION}.tar.gz && \
+    cd nginx-${NGINX_VERSION} && \
+    # Modify Nginx version
+    #sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
+    #sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "nginx/" NGINX_VERSION@' src/core/nginx.h
+    #sed -i 's@Server: nginx@Server: unknow@' src/http/ngx_http_header_filter_module.c
     # close debug
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
         --prefix=${WEBSERVER_INSTALL_DIR} \
         --user=${RUN_USER} --group=${RUN_USER} \
+        --with-http_stub_status_module \
         --with-http_v2_module \
-        --with-http_ssl_module \
         --with-ipv6 \
+        --with-http_ssl_module \
         --with-http_gzip_static_module \
         --with-http_realip_module \
         --with-http_flv_module \
         --with-http_mp4_module \
-        --with-http_concat_module=shared \
-        --with-http_sysguard_module=shared \
         --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
         --with-pcre=/tmp/pcre-${PCRE_VERSION} \
         --with-pcre-jit \
-        --with-jemalloc && \
+        --with-ld-opt='-ljemalloc' && \
     make && make install && \
-    mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
-    touch ${WEBSERVER_INSTALL_DIR}/conf/rewrite/none.conf && \
     rm -rf /tmp/*
-
-ADD ${REMOTE_PATH}/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
-ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
-RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
-    sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
 ADD ${REMOTE_PATH}/install.sh /tmp/install.sh
@@ -58,10 +52,6 @@ RUN chmod 777 install.sh && \
 
 # ending
 WORKDIR ${WWWROOT_DIR}
-RUN mkdir -p ${WWWLOGS_DIR} && \
-    mkdir -p ${WWWROOT_DIR}/default && \
-    echo "Hello World!" > /${WWWROOT_DIR}/default/index.html && \
-    echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/phpinfo.php
 
 # expose port
 EXPOSE 80 443

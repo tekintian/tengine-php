@@ -2,13 +2,13 @@ FROM tekintian/php:5.5
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
-    TENGINE_VERSION=2.2.0 \
-    PCRE_VERSION=8.39 \
-    OPENSSL_VERSION=1.0.2j \
+    TENGINE_VERSION=2.2.2 \
+    PCRE_VERSION=8.41 \
+    OPENSSL_VERSION=1.1.1-pre2 \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
-    REMOTE_PATH=https://github.com/tekintian/docker-php-nginx/raw/master
+    REMOTE_PATH=https://github.com/tekintian/tengine-php/raw/master
 
 WORKDIR /tmp
 

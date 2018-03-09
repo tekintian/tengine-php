@@ -8,7 +8,7 @@ ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
-    REMOTE_PATH=https://github.com/tekintian/docker-php-nginx/raw/master
+    REMOTE_PATH=https://github.com/tekintian/tengine-php/raw/master
 
 WORKDIR /tmp
 
