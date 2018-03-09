@@ -1,28 +1,42 @@
 FROM tekintian/php:7.1.15
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
+
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
-    OPENSSL_VERSION=1.1.1-pre2 \
+    OPENSSL_VERSION=1.1.0-stable-SNAP-20180309 \
+    LuaJIT_VERSION=2.0.5 \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
     REMOTE_PATH=https://github.com/tekintian/tengine-php/raw/master
 
 WORKDIR /tmp
+#
+#最新版本openssl
+# https://www.openssl.org/source/snapshot/
+#tengine http://tengine.taobao.org/download.html
+# Luajit
+# http://luajit.org/download.html
+# http://luajit.org/download/LuaJIT-2.0.5.tar.gz
+#WAF配置文件 https://github.com/loveshell/ngx_lua_waf
+#pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
 
+#LuaJIT
+RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
+    tar xzf LuaJIT-$LuaJIT_VERSION.tar.gz && \
+    cd LuaJIT-$LuaJIT_VERSION && make && \
+    make install PREFIX=/usr/local/luajit && \
+    cd ../ && \
 # install tengine
-RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
-    wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
+    wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+    wget --no-check-certificate https://www.openssl.org/source/snapshot/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
-    tar xzf pcre-${PCRE_VERSION}.tar.gz && \
     tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
+    tar xzf pcre-${PCRE_VERSION}.tar.gz && \
     tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
     cd tengine-${TENGINE_VERSION} && \
-    # Modify Tengine version
-    #sed -i 's@TENGINE "/" TENGINE_VERSION@"nginx/unknown"@' src/core/nginx.h && \
-    # close debug
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
         --prefix=${WEBSERVER_INSTALL_DIR} \
@@ -39,6 +53,10 @@ RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programm
         --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
         --with-pcre=/tmp/pcre-${PCRE_VERSION} \
         --with-pcre-jit \
+        --with-http_lua_module  \
+        --with-luajit-lib=/usr/local/luajit/lib/  \
+        --with-luajit-inc=/usr/local/luajit/include/luajit-2.0/  \
+        --with-ld-opt=-Wl,-rpath,/usr/local/luajit/lib  \
         --with-jemalloc && \
     make && make install && \
     mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
