@@ -62,7 +62,6 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
     make && make install && \
     mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
     mkdir -p ${WEBSERVER_INSTALL_DIR}/logs/hack && \
-    touch ${WEBSERVER_INSTALL_DIR}/conf/rewrite/none.conf && \
     rm -rf /tmp/*
 
 ADD ${REMOTE_PATH}/nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
@@ -72,9 +71,9 @@ RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_por
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
-ADD ${REMOTE_PATH}/install.sh /tmp/install.sh
-RUN chmod 777 install.sh && \
-    bash install.sh && \
+ADD ${REMOTE_PATH}/install_waf.sh /tmp/install_waf.sh
+RUN chmod 777 install_waf.sh && \
+    bash install_waf.sh && \
     rm -rf /tmp/*
 
 # ending
