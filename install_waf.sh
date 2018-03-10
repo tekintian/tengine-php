@@ -5,10 +5,13 @@
 
 wget -c --no-check-certificate ${REMOTE_PATH}/nginx-init && mv -f nginx-init /etc/init.d/nginx
 #wget -c --no-check-certificate ${REMOTE_PATH}/nginx_waf.conf && mv -f nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+wget -c --no-check-certificate ${REMOTE_PATH}/src/tz.php -O ${WWWROOT_DIR}/default/tz.php
+wget -c --no-check-certificate ${REMOTE_PATH}/src/adminer.php -O ${WWWROOT_DIR}/default/adminer.php
 wget -c --no-check-certificate ${REMOTE_PATH}/rewrite.tar.gz && tar -zxvf rewrite.tar.gz
 mv -f rewrite ${WEBSERVER_INSTALL_DIR}/conf/ && unlink rewrite.tar.gz
 mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/vhost
 chown -R root:staff ${WEBSERVER_INSTALL_DIR}/conf/
+chown -R ${RUN_USER}:${RUN_USER} ${WEBSERVER_INSTALL_DIR}/logs/ 
 
 sed -i "s@/usr/local/nginx@$WEBSERVER_INSTALL_DIR@g" /etc/init.d/nginx
 chmod +x /etc/init.d/nginx
@@ -54,5 +57,5 @@ EOF
 
 mkdir -p ${WWWROOT_DIR}/default ${WWWLOGS_DIR}
 [ -d /home ] && chmod 755 /home
-echo "Hello World! IT's running with PHP ${PHP_VERSION}!" > /${WWWROOT_DIR}/default/index.html
+echo "Hello World! IT's running with PHP ${PHP_VERSION}! <hr> <br> <a href='/luatest'>LUA test</a> <br> <a href='/adminer.php'>Adminer</a> <br> <a href='/tz.php'>tz</a>" > /${WWWROOT_DIR}/default/index.html
 echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/phpinfo.php

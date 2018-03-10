@@ -1,11 +1,11 @@
 FROM tekintian/php:7.0.28
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
+
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
     OPENSSL_VERSION=1.1.0g \
-    LuaJIT_VERSION=2.0.5 \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
@@ -13,28 +13,19 @@ ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
 
 WORKDIR /tmp
 #
-#最新版本openssl
-# https://www.openssl.org/
+#最新稳定版本openssl 
+# https://www.openssl.org/source/openssl-1.1.0g.tar.gz
 #tengine http://tengine.taobao.org/download.html
-# Luajit
-# http://luajit.org/download.html
-# http://luajit.org/download/LuaJIT-2.0.5.tar.gz
-#WAF配置文件 https://github.com/loveshell/ngx_lua_waf
 #pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
 
-#LuaJIT
-RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
-    tar xzf LuaJIT-$LuaJIT_VERSION.tar.gz && \
-    cd LuaJIT-$LuaJIT_VERSION && make && \
-    make install PREFIX=/usr/local/luajit && \
-    cd ../ && \
-# install tengine
-    wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
-    tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
+    #解压
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
+    tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
+# install tengine
     cd tengine-${TENGINE_VERSION} && \
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
@@ -52,14 +43,12 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
         --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
         --with-pcre=/tmp/pcre-${PCRE_VERSION} \
         --with-pcre-jit \
-        --with-http_lua_module  \
-        --with-luajit-lib=/usr/local/luajit/lib/  \
-        --with-luajit-inc=/usr/local/luajit/include/luajit-2.0/  \
-        --with-ld-opt=-Wl,-rpath,/usr/local/luajit/lib  \
         --with-jemalloc && \
     make && make install && \
     mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
-    touch ${WEBSERVER_INSTALL_DIR}/conf/rewrite/none.conf && \
+    mkdir -p ${WEBSERVER_INSTALL_DIR}/logs/hack && \
+    #备份默认的配置文件
+    cp -a ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf.bak && \
     rm -rf /tmp/*
 
 ADD ${REMOTE_PATH}/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
@@ -77,8 +66,7 @@ RUN chmod 777 install.sh && \
 WORKDIR ${WWWROOT_DIR}
 RUN mkdir -p ${WWWLOGS_DIR} && \
     mkdir -p ${WWWROOT_DIR}/default && \
-    echo "Hello World!" > /${WWWROOT_DIR}/default/index.html && \
-    echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/phpinfo.php
+    echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/index.php
 
 # expose port
 EXPOSE 80 443

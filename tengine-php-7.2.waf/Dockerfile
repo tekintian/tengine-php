@@ -1,10 +1,13 @@
-FROM tekintian/php:7.1.15
+FROM tekintian/php:7.2.3
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
     OPENSSL_VERSION=1.1.0g \
+    LuaJIT_VERSION=2.0.5 \
+    LNM_VERSION=0.10.12rc2 \
+    NDK_VERSION=0.3.1rc1 \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
@@ -14,15 +17,38 @@ WORKDIR /tmp
 #
 #最新稳定版本openssl 
 # https://www.openssl.org/source/openssl-1.1.0g.tar.gz
+# https://www.openssl.org/source/snapshot/
 #tengine http://tengine.taobao.org/download.html
+# Luajit
+# http://luajit.org/download.html
+# http://luajit.org/download/LuaJIT-2.0.5.tar.gz
+# https://github.com/openresty/lua-nginx-module/
+# https://github.com/simplresty/ngx_devel_kit
+#https://github.com/simplresty/ngx_devel_kit/archive/v0.3.1rc1.tar.gz
+#WAF配置文件 https://github.com/loveshell/ngx_lua_waf
 #pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
 
-RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+
+#LuaJIT. https://github.com/openresty/lua-nginx-module/archive/v0.10.12rc2.tar.gz
+RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
+    tar xzf LuaJIT-$LuaJIT_VERSION.tar.gz && \
+    cd LuaJIT-$LuaJIT_VERSION && make && \
+    make install PREFIX=/usr/local/luajit && \
+    export LUAJIT_LIB=/usr/local/luajit/lib && export LUAJIT_INC=/usr/local/luajit/include/luajit-2.0 && \
+    cd ../ && \
+# download related src
+    wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
+
+    wget -c --no-check-certificate https://github.com/openresty/lua-nginx-module/archive/v${LNM_VERSION}.tar.gz -O  lua-nginx-module-${LNM_VERSION}.tar.gz && \
+    wget -c --no-check-certificate https://github.com/simplresty/ngx_devel_kit/archive/v${NDK_VERSION}.tar.gz -O ngx_devel_kit-${NDK_VERSION}.tar.gz && \
+
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
     #解压
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
     tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
+    tar xzf lua-nginx-module-${LNM_VERSION}.tar.gz && \
+    tar xzf ngx_devel_kit-${NDK_VERSION}.tar.gz && \
     tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
 # install tengine
     cd tengine-${TENGINE_VERSION} && \
@@ -30,6 +56,8 @@ RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programm
     ./configure \
         --prefix=${WEBSERVER_INSTALL_DIR} \
         --user=${RUN_USER} --group=${RUN_USER} \
+        --add-module=/tmp/ngx_devel_kit-${NDK_VERSION} \
+        --add-module=/tmp/lua-nginx-module-${LNM_VERSION} \
         --with-http_v2_module \
         --with-http_ssl_module \
         --with-ipv6 \
@@ -42,6 +70,10 @@ RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programm
         --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
         --with-pcre=/tmp/pcre-${PCRE_VERSION} \
         --with-pcre-jit \
+       # --with-http_lua_module  \
+        --with-luajit-lib=/usr/local/luajit/lib/  \
+        --with-luajit-inc=/usr/local/luajit/include/luajit-2.0/  \
+        --with-ld-opt=-Wl,-rpath,/usr/local/luajit/lib  \
         --with-jemalloc && \
     make && make install && \
     mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
@@ -50,15 +82,16 @@ RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programm
     cp -a ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf.bak && \
     rm -rf /tmp/*
 
-ADD ${REMOTE_PATH}/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_PATH}/nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_PATH}/src/waf.zip ${WEBSERVER_INSTALL_DIR}/conf/
 ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
 RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
-ADD ${REMOTE_PATH}/install.sh /tmp/install.sh
-RUN chmod 777 install.sh && \
-    bash install.sh && \
+ADD ${REMOTE_PATH}/install_waf.sh /tmp/install_waf.sh
+RUN chmod 777 install_waf.sh && \
+    bash install_waf.sh && \
     rm -rf /tmp/*
 
 # ending
