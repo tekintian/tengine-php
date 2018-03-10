@@ -40,6 +40,8 @@ docker exec -d web service php-fpm restart
 
 ## 使用默认配置独立运行Tengine+php
 
+1. 自定义配置运行命令
+
   docker run  -d -it \
   --name tengine  \
   --restart=always \
@@ -49,6 +51,10 @@ docker exec -d web service php-fpm restart
   -v /home/wwwroot:/home/wwwroot  \
   -v /home/wwwlogs:/home/wwwlogs \
   tekintian/tengine-php:latest
+
+2. 简洁运行命令{just for test}：
+  docker run -d -it --name tengine -p 80:80 -p 443:443 tekintian/tengine-php
+
 
 ### 文件夹说明
   默认主机 /home/wwwroot/default
@@ -63,6 +69,7 @@ docker exec -d web service php-fpm restart
   ** -v Volume映射 **
     -v /home/xxx:/usr/local/tengine/conf
     在分号 : 左边的 /home/xxx为你本地主机的路径{可随意修改}，分号右边的的为容器的路径{不可修改}
+
 
 ***
 
