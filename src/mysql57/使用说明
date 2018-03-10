@@ -1,0 +1,21 @@
+
+conf.d 文件夹为mysql 5.7的/etc/mysql/conf.d 配置示例文件，可以直接镜像使用
+
+
+
+
+# mysql57 Docker 运行示例
+
+docker run --name mysql57 -it -d \
+    -p 3357:3306 \
+    -e MYSQL_ROOT_PASSWORD=123456 \
+    --restart=always \
+    -v /home/opt/mysql57/conf.d:/etc/mysql/conf.d \
+    -v /home/opt/mysql57/data:/var/lib/mysql \
+   -v /home/opt/logs/mysql57:/var/log/mysql \
+    mysql:5.7
+
+https://hub.docker.com/_/mysql/
+
+以交互方式登录mysql
+docker exec -it mysql57 mysql -uroot --password=123456
