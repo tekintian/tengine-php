@@ -65,7 +65,8 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
     mkdir -p ${WEBSERVER_INSTALL_DIR}/logs/hack && \
     rm -rf /tmp/*
 
-ADD ${REMOTE_PATH}/nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+#ADD ${REMOTE_PATH}/nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
 ADD ${REMOTE_PATH}/src/waf.zip ${WEBSERVER_INSTALL_DIR}/conf/
 ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
 RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
