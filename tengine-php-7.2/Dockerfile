@@ -22,11 +22,13 @@ WORKDIR /tmp
 #WAF配置文件 https://github.com/loveshell/ngx_lua_waf
 #pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
 
+
 #LuaJIT
 RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
     tar xzf LuaJIT-$LuaJIT_VERSION.tar.gz && \
     cd LuaJIT-$LuaJIT_VERSION && make && \
     make install PREFIX=/usr/local/luajit && \
+    export LUAJIT_LIB=/usr/local/luajit/lib && export LUAJIT_INC=/usr/local/luajit/include/luajit-2.0 && \
     cd ../ && \
 # install tengine
     wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
