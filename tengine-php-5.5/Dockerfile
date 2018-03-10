@@ -4,7 +4,7 @@ MAINTAINER Tekin Tian <tekintian@gmail.com>
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
-    OPENSSL_VERSION=1.1.1-pre2 \
+    OPENSSL_VERSION=1.0.2n \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
