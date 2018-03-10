@@ -2,9 +2,9 @@ FROM tekintian/php:5.5
 MAINTAINER TekinTian <tekintian@gmail.com>
 
 ENV WEBSERVER_INSTALL_DIR=/usr/local/nginx \
-    NGINX_VERSION=1.10.2 \
+    NGINX_VERSION=1.13.9 \
     PCRE_VERSION=8.41 \
-    OPENSSL_VERSION=1.1.1-pre2 \
+    OPENSSL_VERSION=1.0.2n \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \

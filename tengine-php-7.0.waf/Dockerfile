@@ -83,7 +83,6 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
     rm -rf /tmp/*
 
 ADD ${REMOTE_PATH}/nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
-ADD ${REMOTE_PATH}/src/waf.zip ${WEBSERVER_INSTALL_DIR}/conf/
 ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
 RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
