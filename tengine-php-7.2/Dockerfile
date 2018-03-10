@@ -4,7 +4,7 @@ MAINTAINER Tekin Tian <tekintian@gmail.com>
 ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
-    OPENSSL_VERSION=1.1.0-stable-SNAP-20180309 \
+    OPENSSL_VERSION=1.1.0g \
     LuaJIT_VERSION=2.0.5 \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
@@ -13,7 +13,8 @@ ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
 
 WORKDIR /tmp
 #
-#最新版本openssl
+#最新稳定版本openssl 
+# https://www.openssl.org/source/openssl-1.1.0g.tar.gz
 # https://www.openssl.org/source/snapshot/
 #tengine http://tengine.taobao.org/download.html
 # Luajit
@@ -32,7 +33,7 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
     cd ../ && \
 # install tengine
     wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
-    wget --no-check-certificate https://www.openssl.org/source/snapshot/openssl-${OPENSSL_VERSION}.tar.gz && \
+    wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
     tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
