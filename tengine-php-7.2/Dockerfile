@@ -59,10 +59,12 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
         --with-jemalloc && \
     make && make install && \
     mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
+    mkdir -p ${WEBSERVER_INSTALL_DIR}/logs/hack && \
     touch ${WEBSERVER_INSTALL_DIR}/conf/rewrite/none.conf && \
     rm -rf /tmp/*
 
-ADD ${REMOTE_PATH}/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_PATH}/nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_PATH}/src/waf/ ${WEBSERVER_INSTALL_DIR}/conf/waf/
 ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
 RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
@@ -77,8 +79,7 @@ RUN chmod 777 install.sh && \
 WORKDIR ${WWWROOT_DIR}
 RUN mkdir -p ${WWWLOGS_DIR} && \
     mkdir -p ${WWWROOT_DIR}/default && \
-    echo "Hello World!" > /${WWWROOT_DIR}/default/index.html && \
-    echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/phpinfo.php
+    echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/index.php
 
 # expose port
 EXPOSE 80 443
