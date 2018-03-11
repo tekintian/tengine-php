@@ -1,6 +1,6 @@
 FROM tekintian/php:7.1.15
 MAINTAINER Tekin Tian <tekintian@gmail.com>
-ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
+ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
     OPENSSL_VERSION=1.1.0g \
@@ -10,7 +10,7 @@ ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
-    REMOTE_PATH=https://github.com/tekintian/tengine-php/raw/master
+    REMOTE_SRC_PATH=https://github.com/tekintian/tengine-php/raw/master
 
 WORKDIR /tmp
 #
@@ -27,14 +27,15 @@ WORKDIR /tmp
 #WAF配置文件 https://github.com/loveshell/ngx_lua_waf
 #pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
 
-
+#install build deps
+RUN  apt-get update && apt-get install -y gcc g++ make cmake autoconf libssl-dev  libcurl4-openssl-dev libxslt-dev libicu-dev  libxml2-dev libjpeg-dev libpng-dev libfreetype6-dev libsasl2-dev libevent-dev libpcre3-dev libgpgme11-dev pkg-config patch && rm -rf /var/lib/apt/lists/* && \
 #LuaJIT. https://github.com/openresty/lua-nginx-module/archive/v0.10.12rc2.tar.gz
-RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
+    wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
     tar xzf LuaJIT-$LuaJIT_VERSION.tar.gz && \
     cd LuaJIT-$LuaJIT_VERSION && make && \
     make install PREFIX=/usr/local/luajit && \
     export LUAJIT_LIB=/usr/local/luajit/lib && export LUAJIT_INC=/usr/local/luajit/include/luajit-2.0 && \
-    cd ../ && \
+    cd /tmp/ && \
 # download related src
     wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
@@ -53,7 +54,7 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
     cd tengine-${TENGINE_VERSION} && \
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
-        --prefix=${WEBSERVER_INSTALL_DIR} \
+        --prefix=${TENGINE_INSTALL_DIR} \
         --user=${RUN_USER} --group=${RUN_USER} \
         --add-module=/tmp/ngx_devel_kit-${NDK_VERSION} \
         --add-module=/tmp/lua-nginx-module-${LNM_VERSION} \
@@ -75,19 +76,21 @@ RUN wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VER
         --with-ld-opt=-Wl,-rpath,/usr/local/luajit/lib  \
         --with-jemalloc && \
     make && make install && \
-    mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
-    mkdir -p ${WEBSERVER_INSTALL_DIR}/logs/hack && \
+    mkdir -p ${TENGINE_INSTALL_DIR}/conf/rewrite && \
+    mkdir -p ${TENGINE_INSTALL_DIR}/logs/hack && \
     #备份默认的配置文件
-    cp -a ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf.bak && \
-    rm -rf /tmp/*
+    cp -a ${TENGINE_INSTALL_DIR}/conf/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf.bak && \
+     cd /tmp/ && rm -rf /tmp/* && \
+    #remove build deps
+    apt-get purge -y --auto-remove gcc g++ make cmake autoconf libssl-dev  libcurl4-openssl-dev libxslt-dev libicu-dev  libxml2-dev libjpeg-dev libpng-dev libfreetype6-dev libsasl2-dev libevent-dev  libpcre3-dev libgpgme11-dev pkg-config patch libgpgme11-dev
 
-ADD ${REMOTE_PATH}/nginx_waf.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
-ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
-RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
-    sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_SRC_PATH}/nginx_waf.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_SRC_PATH}/nginx-init /etc/init.d/nginx
+RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf && \
+    sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
-ADD ${REMOTE_PATH}/install_waf.sh /tmp/install_waf.sh
+ADD ${REMOTE_SRC_PATH}/install_waf.sh /tmp/install_waf.sh
 RUN chmod 777 install_waf.sh && \
     bash install_waf.sh && \
     rm -rf /tmp/*
@@ -102,7 +105,7 @@ RUN mkdir -p ${WWWLOGS_DIR} && \
 EXPOSE 80 443
 
 # Set the entrypoint script.
-ADD ${REMOTE_PATH}/entrypoint.sh /entrypoint.sh
+ADD ${REMOTE_SRC_PATH}/entrypoint.sh /entrypoint.sh
 RUN chmod 777 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

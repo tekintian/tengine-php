@@ -2,14 +2,14 @@ FROM tekintian/php:7.0.28
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 
-ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
+ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
     OPENSSL_VERSION=1.1.0g \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
-    REMOTE_PATH=https://github.com/tekintian/tengine-php/raw/master
+    REMOTE_SRC_PATH=https://github.com/tekintian/tengine-php/raw/master
 
 WORKDIR /tmp
 #
@@ -29,7 +29,7 @@ RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programm
     cd tengine-${TENGINE_VERSION} && \
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
-        --prefix=${WEBSERVER_INSTALL_DIR} \
+        --prefix=${TENGINE_INSTALL_DIR} \
         --user=${RUN_USER} --group=${RUN_USER} \
         --with-http_v2_module \
         --with-http_ssl_module \
@@ -45,19 +45,19 @@ RUN wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programm
         --with-pcre-jit \
         --with-jemalloc && \
     make && make install && \
-    mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
-    mkdir -p ${WEBSERVER_INSTALL_DIR}/logs/hack && \
+    mkdir -p ${TENGINE_INSTALL_DIR}/conf/rewrite && \
+    mkdir -p ${TENGINE_INSTALL_DIR}/logs/hack && \
     #备份默认的配置文件
-    cp -a ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf.bak && \
+    cp -a ${TENGINE_INSTALL_DIR}/conf/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf.bak && \
     rm -rf /tmp/*
 
-ADD ${REMOTE_PATH}/nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
-ADD ${REMOTE_PATH}/nginx-init /etc/init.d/nginx
-RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
-    sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_SRC_PATH}/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
+ADD ${REMOTE_SRC_PATH}/nginx-init /etc/init.d/nginx
+RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf && \
+    sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
-ADD ${REMOTE_PATH}/install.sh /tmp/install.sh
+ADD ${REMOTE_SRC_PATH}/install.sh /tmp/install.sh
 RUN chmod 777 install.sh && \
     bash install.sh && \
     rm -rf /tmp/*
@@ -72,7 +72,7 @@ RUN mkdir -p ${WWWLOGS_DIR} && \
 EXPOSE 80 443
 
 # Set the entrypoint script.
-ADD ${REMOTE_PATH}/entrypoint.sh /entrypoint.sh
+ADD ${REMOTE_SRC_PATH}/entrypoint.sh /entrypoint.sh
 RUN chmod 777 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

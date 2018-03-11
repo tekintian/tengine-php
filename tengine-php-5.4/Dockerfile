@@ -1,14 +1,14 @@
 FROM tekintian/php:5.4
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
-ENV WEBSERVER_INSTALL_DIR=/usr/local/tengine \
+ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
     OPENSSL_VERSION=1.0.2n \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
-    REMOTE_PATH=https://github.com/tekintian/tengine-php/raw/master
+    REMOTE_SRC_PATH=https://github.com/tekintian/tengine-php/raw/master
 
 WORKDIR /tmp
 
@@ -20,7 +20,7 @@ RUN apt-get install -y  bzip2 && \
     ./configure --prefix=/usr/local/jemalloc --libdir=/usr/local/lib && \
     make && make install && \
     make clean && \
-    cd ../ && \
+    cd /tmp/ && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     /sbin/ldconfig 
 
@@ -36,7 +36,7 @@ RUN  wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/program
     # close debug
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
-        --prefix=${WEBSERVER_INSTALL_DIR} \
+        --prefix=${TENGINE_INSTALL_DIR} \
         --user=${RUN_USER} --group=${RUN_USER} \
         --with-http_v2_module \
         --with-http_ssl_module \
@@ -52,19 +52,19 @@ RUN  wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/program
         --with-pcre-jit \
         --with-jemalloc && \
     make && make install && \
-    mkdir -p ${WEBSERVER_INSTALL_DIR}/conf/rewrite && \
-    touch ${WEBSERVER_INSTALL_DIR}/conf/rewrite/none.conf && \
+    mkdir -p ${TENGINE_INSTALL_DIR}/conf/rewrite && \
+    touch ${TENGINE_INSTALL_DIR}/conf/rewrite/none.conf && \
     rm -rf /tmp/* && \
     apt-get remove -y bzip2 && \
     apt-get autoremove -y
 
-ADD nginx.conf ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+ADD nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 ADD nginx-init /etc/init.d/nginx
-RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf && \
-    sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${WEBSERVER_INSTALL_DIR}/conf/nginx.conf
+RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf && \
+    sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
-ADD ${REMOTE_PATH}/install.sh /tmp/install.sh
+ADD ${REMOTE_SRC_PATH}/install.sh /tmp/install.sh
 RUN chmod 777 install.sh && \
     bash install.sh && \
     rm -rf /tmp/*
