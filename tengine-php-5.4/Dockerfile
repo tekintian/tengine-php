@@ -13,7 +13,29 @@ ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
 WORKDIR /tmp
 
 # install tengine
-RUN apt-get install -y  bzip2 && \
+RUN buildDeps='\
+                gcc \
+                g++ \
+                make \
+                cmake \
+                autoconf \
+                libssl-dev \
+                libcurl4-openssl-dev \
+                libxslt-dev \
+                libicu-dev \
+                libxml2-dev \
+                libjpeg-dev \
+                libpng-dev \
+                libfreetype6-dev \
+                libsasl2-dev \
+                libevent-dev \
+                libpcre3-dev \
+                libgpgme11-dev \
+                pkg-config \
+                patch \
+                libgpgme11-dev \
+                --no-install-recommends ' \
+        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* \
     wget http://mirrors.linuxeye.com/oneinstack/src/jemalloc-4.4.0.tar.bz2 && \
     tar -xjf jemalloc-4.4.0.tar.bz2 && \
     cd jemalloc-4.4.0 && \
@@ -22,9 +44,8 @@ RUN apt-get install -y  bzip2 && \
     make clean && \
     cd /tmp/ && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
-    /sbin/ldconfig 
-
-RUN  wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+    /sbin/ldconfig  && \
+  wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
@@ -54,9 +75,9 @@ RUN  wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/program
     make && make install && \
     mkdir -p ${TENGINE_INSTALL_DIR}/conf/rewrite && \
     touch ${TENGINE_INSTALL_DIR}/conf/rewrite/none.conf && \
-    rm -rf /tmp/* && \
-    apt-get remove -y bzip2 && \
-    apt-get autoremove -y
+     cd /tmp/ && rm -rf /tmp/* && \
+    #remove build deps
+    apt-get purge -y --auto-remove ${buildDeps}
 
 ADD nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 ADD nginx-init /etc/init.d/nginx

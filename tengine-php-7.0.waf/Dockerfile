@@ -29,7 +29,29 @@ WORKDIR /tmp
 #pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
 
 #install build deps
-RUN  apt-get update && apt-get install -y gcc g++ make cmake autoconf libssl-dev  libcurl4-openssl-dev libxslt-dev libicu-dev  libxml2-dev libjpeg-dev libpng-dev libfreetype6-dev libsasl2-dev libevent-dev libpcre3-dev libgpgme11-dev pkg-config patch && rm -rf /var/lib/apt/lists/* && \
+RUN  buildDeps='\
+                gcc \
+                g++ \
+                make \
+                cmake \
+                autoconf \
+                libssl-dev \
+                libcurl4-openssl-dev \
+                libxslt-dev \
+                libicu-dev \
+                libxml2-dev \
+                libjpeg-dev \
+                libpng-dev \
+                libfreetype6-dev \
+                libsasl2-dev \
+                libevent-dev \
+                libpcre3-dev \
+                libgpgme11-dev \
+                pkg-config \
+                patch \
+                libgpgme11-dev \
+                --no-install-recommends ' \
+        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* \
 #LuaJIT. https://github.com/openresty/lua-nginx-module/archive/v0.10.12rc2.tar.gz
     wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
     tar xzf LuaJIT-$LuaJIT_VERSION.tar.gz && \
@@ -83,7 +105,7 @@ RUN  apt-get update && apt-get install -y gcc g++ make cmake autoconf libssl-dev
     cp -a ${TENGINE_INSTALL_DIR}/conf/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf.bak && \
      cd /tmp/ && rm -rf /tmp/* && \
     #remove build deps
-    apt-get purge -y --auto-remove gcc g++ make cmake autoconf libssl-dev  libcurl4-openssl-dev libxslt-dev libicu-dev  libxml2-dev libjpeg-dev libpng-dev libfreetype6-dev libsasl2-dev libevent-dev  libpcre3-dev libgpgme11-dev pkg-config patch libgpgme11-dev
+    apt-get purge -y --auto-remove ${buildDeps}
 
 ADD ${REMOTE_SRC_PATH}/nginx_waf.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 ADD ${REMOTE_SRC_PATH}/nginx-init /etc/init.d/nginx
