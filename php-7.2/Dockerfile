@@ -1,19 +1,24 @@
-FROM tekintian/php:5.5
+FROM tekintian/php:7.2.3
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
-    OPENSSL_VERSION=1.0.2n \
+    OPENSSL_VERSION=1.1.0g \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
     REMOTE_SRC_PATH=https://github.com/tekintian/tengine-php/raw/master
 
 WORKDIR /tmp
+#
+#最新稳定版本openssl 
+# https://www.openssl.org/source/openssl-1.1.0g.tar.gz
+#tengine http://tengine.taobao.org/download.html
+#pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
 
-# install tengine
-RUN buildDeps='\
+#install build deps
+RUN  buildDeps='\
                 gcc \
                 g++ \
                 make \
@@ -35,17 +40,16 @@ RUN buildDeps='\
                 patch \
                 libgpgme11-dev \
                 --no-install-recommends ' \
-        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* \
+        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
     wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
-    wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
+    wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
+    #解压
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
     tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
+# install tengine
     cd tengine-${TENGINE_VERSION} && \
-    # Modify Tengine version
-    #sed -i 's@TENGINE "/" TENGINE_VERSION@"nginx/unknown"@' src/core/nginx.h && \
-    # close debug
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
         --prefix=${TENGINE_INSTALL_DIR} \
@@ -65,8 +69,10 @@ RUN buildDeps='\
         --with-jemalloc && \
     make && make install && \
     mkdir -p ${TENGINE_INSTALL_DIR}/conf/rewrite && \
-    touch ${TENGINE_INSTALL_DIR}/conf/rewrite/none.conf && \
-     cd /tmp/ && rm -rf /tmp/* && \
+    mkdir -p ${TENGINE_INSTALL_DIR}/logs/hack && \
+    #备份默认的配置文件
+    cp -a ${TENGINE_INSTALL_DIR}/conf/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf.bak && \
+    cd /tmp/ && rm -rf /tmp/* && \
     #remove build deps
     apt-get purge -y --auto-remove ${buildDeps}
 
@@ -85,8 +91,7 @@ RUN chmod 777 install.sh && \
 WORKDIR ${WWWROOT_DIR}
 RUN mkdir -p ${WWWLOGS_DIR} && \
     mkdir -p ${WWWROOT_DIR}/default && \
-    echo "Hello World!" > /${WWWROOT_DIR}/default/index.html && \
-    echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/phpinfo.php
+    echo "<?php phpinfo();" > /${WWWROOT_DIR}/default/index.php
 
 # expose port
 EXPOSE 80 443

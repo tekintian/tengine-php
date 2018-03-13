@@ -1,4 +1,4 @@
-FROM tekintian/php:5.6.34
+FROM tekintian/php:5.4
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
@@ -35,8 +35,17 @@ RUN buildDeps='\
                 patch \
                 libgpgme11-dev \
                 --no-install-recommends ' \
-        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* \
-    wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
+    wget http://mirrors.linuxeye.com/oneinstack/src/jemalloc-4.4.0.tar.bz2 && \
+    tar -xjf jemalloc-4.4.0.tar.bz2 && \
+    cd jemalloc-4.4.0 && \
+    ./configure --prefix=/usr/local/jemalloc --libdir=/usr/local/lib && \
+    make && make install && \
+    make clean && \
+    cd /tmp/ && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
+    /sbin/ldconfig  && \
+  wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
@@ -70,8 +79,8 @@ RUN buildDeps='\
     #remove build deps
     apt-get purge -y --auto-remove ${buildDeps}
 
-ADD ${REMOTE_SRC_PATH}/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
-ADD ${REMOTE_SRC_PATH}/nginx-init /etc/init.d/nginx
+ADD nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
+ADD nginx-init /etc/init.d/nginx
 RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf && \
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 
@@ -92,7 +101,7 @@ RUN mkdir -p ${WWWLOGS_DIR} && \
 EXPOSE 80 443
 
 # Set the entrypoint script.
-ADD ${REMOTE_SRC_PATH}/entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh /entrypoint.sh
 RUN chmod 777 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

@@ -51,7 +51,7 @@ RUN  buildDeps='\
                 patch \
                 libgpgme11-dev \
                 --no-install-recommends ' \
-        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* \
+        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
 #LuaJIT. https://github.com/openresty/lua-nginx-module/archive/v0.10.12rc2.tar.gz
     wget -c --no-check-certificate http://luajit.org/download/LuaJIT-$LuaJIT_VERSION.tar.gz && \
     tar xzf LuaJIT-$LuaJIT_VERSION.tar.gz && \

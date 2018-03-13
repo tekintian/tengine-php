@@ -1,4 +1,4 @@
-FROM tekintian/php:7.2.3
+FROM tekintian/php:7.1.15
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
@@ -16,7 +16,6 @@ WORKDIR /tmp
 # https://www.openssl.org/source/openssl-1.1.0g.tar.gz
 #tengine http://tengine.taobao.org/download.html
 #pcre  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre
-
 #install build deps
 RUN  buildDeps='\
                 gcc \
@@ -40,7 +39,7 @@ RUN  buildDeps='\
                 patch \
                 libgpgme11-dev \
                 --no-install-recommends ' \
-        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* \
+        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
     wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
@@ -72,7 +71,7 @@ RUN  buildDeps='\
     mkdir -p ${TENGINE_INSTALL_DIR}/logs/hack && \
     #备份默认的配置文件
     cp -a ${TENGINE_INSTALL_DIR}/conf/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf.bak && \
-    cd /tmp/ && rm -rf /tmp/* && \
+     cd /tmp/ && rm -rf /tmp/* && \
     #remove build deps
     apt-get purge -y --auto-remove ${buildDeps}
 
