@@ -3,7 +3,7 @@ MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
-    PCRE_VERSION=8.41 \
+    PCRE_VERSION=8.42 \
     OPENSSL_VERSION=1.1.0h \
     LuaJIT_VERSION=2.0.5 \
     LNM_VERSION=0.10.12rc2 \
