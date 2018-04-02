@@ -25,20 +25,20 @@ ngx_lua如果是0.9.2以上版本，建议正则过滤函数改为ngx.re.find，
 
 ###使用说明：
 
-nginx安装路径假设为:/usr/local/nginx/conf/
+nginx安装路径假设为:/usr/local/tengine/conf/
 
 把ngx_lua_waf下载到conf目录下,解压命名为waf
 
 在nginx.conf的http段添加
 
-		lua_package_path "/usr/local/nginx/conf/waf/?.lua";
+		lua_package_path "/usr/local/tengine/conf/waf/?.lua";
         lua_shared_dict limit 10m;
-        init_by_lua_file  /usr/local/nginx/conf/waf/init.lua; 
-    	access_by_lua_file /usr/local/nginx/conf/waf/waf.lua;
+        init_by_lua_file  /usr/local/tengine/conf/waf/init.lua; 
+    	access_by_lua_file /usr/local/tengine/conf/waf/waf.lua;
 
 配置config.lua里的waf规则目录(一般在waf/conf/目录下)
 
-        RulePath = "/usr/local/nginx/conf/waf/wafconf/"
+        RulePath = "/usr/local/tengine/conf/waf/wafconf/"
 
 绝对路径如有变动，需对应修改
 
@@ -47,11 +47,11 @@ nginx安装路径假设为:/usr/local/nginx/conf/
 
 ###配置文件详细说明：
 
-    	RulePath = "/usr/local/nginx/conf/waf/wafconf/"
+    	RulePath = "/usr/local/tengine/conf/waf/wafconf/"
         --规则存放目录
         attacklog = "off"
         --是否开启攻击信息记录，需要配置logdir
-        logdir = "/usr/local/nginx/logs/hack/"
+        logdir = "/usr/local/tengine/logs/hack/"
         --log存储目录，该目录需要用户自己新建，切需要nginx用户的可写权限
         UrlDeny="on"
         --是否拦截url访问

@@ -33,14 +33,14 @@ tar -xzvf nginx-1.2.4.tar.gz
 cd nginx-1.2.4/
 export LUAJIT_LIB=/usr/local/lj2/lib/
 export LUAJIT_INC=/usr/local/lj2/include/luajit-2.0/
-./configure --user=daemon --group=daemon --prefix=/usr/local/nginx/ --with-http_stub_status_module --with-http_sub_module --with-http_gzip_static_module --without-mail_pop3_module --without-mail_imap_module --without-mail_smtp_module  --add-module=../ngx_devel_kit-0.2.17rc2/ --add-module=../lua-nginx-module-0.7.4/
+./configure --user=daemon --group=daemon --prefix=/usr/local/tengine/ --with-http_stub_status_module --with-http_sub_module --with-http_gzip_static_module --without-mail_pop3_module --without-mail_imap_module --without-mail_smtp_module  --add-module=../ngx_devel_kit-0.2.17rc2/ --add-module=../lua-nginx-module-0.7.4/
 make -j8
 make install 
 #rm -rf /data/src
-cd /usr/local/nginx/conf/
+cd /usr/local/tengine/conf/
 wget https://github.com/loveshell/ngx_lua_waf/archive/master.zip --no-check-certificate
 unzip master.zip
-mv ngx_lua_waf-master/* /usr/local/nginx/conf/
+mv ngx_lua_waf-master/* /usr/local/tengine/conf/
 rm -rf ngx_lua_waf-master
 rm -rf /data/src
 mkdir -p /data/logs/hack

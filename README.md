@@ -174,7 +174,7 @@ docker run --name mysql \
 
 docker run --name web \
            --link mysql:mysql \
-           -v /home/conf/nginx:/usr/local/nginx/conf \
+           -v /home/conf/nginx:/usr/local/tengine/conf \
            -v /home/wwwlogs:/home/wwwlogs \
            -v /home/wwwroot:/home/wwwroot \
            -p 80:80 -p 443:443 \

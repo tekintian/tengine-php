@@ -25,7 +25,7 @@ mkdir -p ${TENGINE_INSTALL_DIR}/conf/vhost
 chown -R root:staff ${TENGINE_INSTALL_DIR}/conf/
 chown -R ${RUN_USER}:${RUN_USER} ${TENGINE_INSTALL_DIR}/logs/ 
 
-sed -i "s@/usr/local/nginx@${TENGINE_INSTALL_DIR}@g" /etc/init.d/nginx
+sed -i "s@/usr/local/tengine@${TENGINE_INSTALL_DIR}@g" /etc/init.d/nginx
 chmod +x /etc/init.d/nginx
 ldconfig
 

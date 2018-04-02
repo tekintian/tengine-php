@@ -12,7 +12,7 @@ mv -f rewrite ${TENGINE_INSTALL_DIR}/conf/ && unlink rewrite.tar.gz
 mkdir -p ${TENGINE_INSTALL_DIR}/conf/vhost
 chown -R root:staff ${TENGINE_INSTALL_DIR}/conf/
 
-sed -i "s@/usr/local/nginx@${TENGINE_INSTALL_DIR}@g" /etc/init.d/nginx
+sed -i "s@/usr/local/tengine@${TENGINE_INSTALL_DIR}@g" /etc/init.d/nginx
 chmod +x /etc/init.d/nginx
 ldconfig
 

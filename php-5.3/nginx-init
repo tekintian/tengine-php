@@ -18,7 +18,7 @@
 #       server and it's process state.
 #
 # processname: nginx
-# config:      /usr/local/nginx/conf/nginx.conf
+# config:      /usr/local/tengine/conf/nginx.conf
 # pidfile:     /var/run/nginx.pid
 # Provides:    nginx
 #
@@ -40,14 +40,14 @@
 #                               Consts
 #------------------------------------------------------------------------------
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/local/nginx/sbin/nginx
+DAEMON=/usr/local/tengine/sbin/nginx
 
 PS="nginx"
 PIDNAME="nginx"             #lets you do $PS-slave
 PIDFILE=$PIDNAME.pid                    #pid file
 PIDSPATH=/var/run
 
-DESCRIPTION="Nginx Server..."
+DESCRIPTION="Tengine Server..."
 
 RUNAS=root                              #user to run as
 
@@ -57,7 +57,7 @@ TRUE=1                                  #boolean
 FALSE=0                                 #boolean
 
 lockfile=/var/lock/subsys/nginx
-NGINX_CONF_FILE="/usr/local/nginx/conf/nginx.conf"
+NGINX_CONF_FILE="/usr/local/tengine/conf/nginx.conf"
 
 #------------------------------------------------------------------------------
 #                               Simple Tests
