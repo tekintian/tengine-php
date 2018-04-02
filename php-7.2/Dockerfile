@@ -1,10 +1,10 @@
-FROM tekintian/php:7.2.3
+FROM tekintian/php:7.2.4
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
-    OPENSSL_VERSION=1.1.0g \
+    OPENSSL_VERSION=1.1.0h \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \

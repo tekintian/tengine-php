@@ -1,5 +1,6 @@
-FROM tekintian/php:7.1.16
+FROM tekintian/php:7.3-build20180402
 MAINTAINER Tekin Tian <tekintian@gmail.com>
+
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.41 \
@@ -102,7 +103,7 @@ RUN  buildDeps='\
     mkdir -p ${TENGINE_INSTALL_DIR}/logs/hack && \
     #备份默认的配置文件
     cp -a ${TENGINE_INSTALL_DIR}/conf/nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf.bak && \
-     cd /tmp/ && rm -rf /tmp/* && \
+    cd /tmp/ && rm -rf /tmp/* && \
     #remove build deps
     apt-get purge -y --auto-remove ${buildDeps}
 
