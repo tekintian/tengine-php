@@ -38,9 +38,9 @@ RUN  buildDeps='\
 	    --no-install-recommends ' \
 	&& apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* && \
 # install tengine
- 	cd /tmp/ && \
-    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
-    /sbin/ldconfig  && \
+ 	# cd /tmp/ && \
+  #   echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
+  #   /sbin/ldconfig  && \
     #PCre
     wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \

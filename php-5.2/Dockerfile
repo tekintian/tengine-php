@@ -48,6 +48,7 @@ RUN  buildDeps='\
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     /sbin/ldconfig  && \
     #PCre
+    cd /tmp/ && \
     wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
