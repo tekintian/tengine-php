@@ -1,4 +1,4 @@
-FROM tekintian/php:5.4
+FROM tekintian/php:5.4.45
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
@@ -36,12 +36,12 @@ RUN buildDeps='\
                 libgpgme11-dev \
                 --no-install-recommends ' \
         && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
-    wget http://mirrors.linuxeye.com/oneinstack/src/jemalloc-4.4.0.tar.bz2 && \
-    tar -xjf jemalloc-4.4.0.tar.bz2 && \
-    cd jemalloc-4.4.0 && \
-    ./configure --prefix=/usr/local/jemalloc --libdir=/usr/local/lib && \
-    make && make install && \
-    make clean && \
+    # wget http://mirrors.linuxeye.com/oneinstack/src/jemalloc-4.4.0.tar.bz2 && \
+    # tar -xjf jemalloc-4.4.0.tar.bz2 && \
+    # cd jemalloc-4.4.0 && \
+    # ./configure --prefix=/usr/local/jemalloc --libdir=/usr/local/lib && \
+    # make && make install_bin install_include install_lib && \
+    # make clean && \
     cd /tmp/ && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     /sbin/ldconfig  && \

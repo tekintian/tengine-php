@@ -14,36 +14,31 @@ WORKDIR /tmp
 
 #install build deps
 RUN  buildDeps='\
-                gcc \
-                g++ \
-                make \
-                cmake \
-                autoconf \
-                libssl-dev \
-                libcurl4-openssl-dev \
-                libxslt-dev \
-                libicu-dev \
-                libxml2-dev \
-                libjpeg-dev \
-                libpng-dev \
-                libfreetype6-dev \
-                libsasl2-dev \
-                libevent-dev \
-                libpcre3-dev \
-                libgpgme11-dev \
-                pkg-config \
-                patch \
-                bzip2 \
-                libgpgme11-dev \
-                --no-install-recommends ' \
-        && apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
+	    gcc \
+	    g++ \
+	    make \
+	    cmake \
+	    autoconf \
+	    libssl-dev \
+	    libcurl4-openssl-dev \
+	    libxslt-dev \
+	    libicu-dev \
+	    libxml2-dev \
+	    libjpeg-dev \
+	    libpng-dev \
+	    libfreetype6-dev \
+	    libsasl2-dev \
+	    libevent-dev \
+	    libpcre3-dev \
+	    libgpgme11-dev \
+	    pkg-config \
+	    patch \
+	    bzip2 \
+	    libgpgme11-dev \
+	    --no-install-recommends ' \
+	&& apt-get update && apt-get install -y ${buildDeps} && rm -rf /var/lib/apt/lists/* && \
 # install tengine
-    wget -c --no-check-certificate  https://github.com/jemalloc/jemalloc/archive/stable-4.tar.gz -O jemalloc-stable-4.tar.gz && \
-    tar -xjf jemalloc-stable-4.tar.gz && \
-    cd jemalloc-stable-4 && \
-    ./configure --prefix=/usr/local/jemalloc --libdir=/usr/local/lib && \
-    make && make install && \
-    cd /tmp/ && \
+ 	cd /tmp/ && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     /sbin/ldconfig  && \
     #PCre
