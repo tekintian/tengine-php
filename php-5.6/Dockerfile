@@ -12,7 +12,7 @@ ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
 
 WORKDIR /tmp
 
-# install tengine
+# install tengine with php 5.6.35
 RUN buildDeps='\
                 gcc \
                 g++ \
