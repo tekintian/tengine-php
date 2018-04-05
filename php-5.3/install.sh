@@ -5,8 +5,8 @@ TENGINE_INSTALL_DIR=/usr/local/tengine
 [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=${TENGINE_INSTALL_DIR}/sbin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${TENGINE_INSTALL_DIR} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${TENGINE_INSTALL_DIR}/sbin:\1@" /etc/profile
 
-wget -c --no-check-certificate ${REMOTE_SRC_PATH}/nginx-init && mv -f nginx-init /etc/init.d/nginx
-wget -c --no-check-certificate ${REMOTE_SRC_PATH}/nginx.conf && mv -f nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
+#wget -c --no-check-certificate ${REMOTE_SRC_PATH}/nginx-init && mv -f nginx-init /etc/init.d/nginx
+#wget -c --no-check-certificate ${REMOTE_SRC_PATH}/nginx.conf && mv -f nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 wget -c --no-check-certificate ${REMOTE_SRC_PATH}/rewrite.tar.gz && tar -zxvf rewrite.tar.gz
 mv -f rewrite ${TENGINE_INSTALL_DIR}/conf/ && unlink rewrite.tar.gz
 mkdir -p ${TENGINE_INSTALL_DIR}/conf/vhost

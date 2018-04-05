@@ -39,7 +39,7 @@ RUN  buildDeps='\
         m4 \
         perl \
         --no-install-recommends ' \
-        && apt-get update && apt-get install -y wget ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
+    && apt-get update && apt-get install -y wget procps unzip bzip2 psmisc ${buildDeps} && rm -rf /var/lib/apt/lists/*  && \
 # install tengine
     wget -c --no-check-certificate  https://github.com/jemalloc/jemalloc/archive/stable-4.tar.gz -O jemalloc-stable-4.tar.gz && \
     tar -zxvf jemalloc-stable-4.tar.gz  && \
@@ -92,7 +92,7 @@ RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_por
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
-ADD ${REMOTE_SRC_PATH}/install.sh /tmp/install.sh
+ADD install.sh /tmp/install.sh
 RUN chmod 777 install.sh && \
     bash install.sh && \
     rm -rf /tmp/*

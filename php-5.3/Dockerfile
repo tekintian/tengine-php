@@ -5,7 +5,7 @@ ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
     TENGINE_VERSION=2.2.2 \
     PCRE_VERSION=8.42 \
     OPENSSL_VERSION=1.1.0h \
-    RUN_USER=www-data \
+    RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
     WWWLOGS_DIR=/home/wwwlogs \
     REMOTE_SRC_PATH=https://github.com/tekintian/tengine-php/raw/master
@@ -87,7 +87,7 @@ RUN sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_por
     sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 
 # run install script
-ADD ${REMOTE_SRC_PATH}/install.sh /tmp/install.sh
+ADD install.sh /tmp/install.sh
 RUN chmod 777 install.sh && \
     bash install.sh && \
     rm -rf /tmp/*
