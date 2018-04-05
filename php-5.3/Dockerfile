@@ -12,6 +12,8 @@ ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
 
 WORKDIR /tmp
 
+ADD src/ /tmp
+
 #install build deps
 RUN  buildDeps='\
 	    gcc \
@@ -42,9 +44,9 @@ RUN  buildDeps='\
   #   echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
   #   /sbin/ldconfig  && \
     #PCre
-    wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
-    wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
-    wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
+   # wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+   # wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
+   # wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
     tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
