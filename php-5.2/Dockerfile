@@ -57,9 +57,9 @@ RUN  buildDeps='\
     tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
     cd tengine-${TENGINE_VERSION} && \
     # Modify Tengine version
-    #sed -i 's@TENGINE "/" TENGINE_VERSION@"nginx/unknown"@' src/core/nginx.h && \
+    sed -i 's@TENGINE "/" TENGINE_VERSION@"nginx/unknown"@' src/core/nginx.h && \
     # close debug
-    sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
+   # sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \
         --prefix=${TENGINE_INSTALL_DIR} \
         --user=${RUN_USER} --group=${RUN_USER} \
