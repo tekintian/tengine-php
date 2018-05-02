@@ -5,8 +5,13 @@ TENGINE_INSTALL_DIR=/usr/local/tengine
 [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=${TENGINE_INSTALL_DIR}/sbin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${TENGINE_INSTALL_DIR} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${TENGINE_INSTALL_DIR}/sbin:\1@" /etc/profile
 
+<<<<<<< HEAD
 wget -c --no-check-certificate ${REMOTE_SRC_PATH}/nginx-init && mv -f nginx-init /etc/init.d/nginx
 wget -c --no-check-certificate ${REMOTE_SRC_PATH}/nginx.conf && mv -f nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
+=======
+#wget -c --no-check-certificate ${REMOTE_SRC_PATH}/php-5.2/nginx-init && mv -f nginx-init /etc/init.d/nginx
+#wget -c --no-check-certificate ${REMOTE_SRC_PATH}/php-5.2/nginx.conf && mv -f nginx.conf ${TENGINE_INSTALL_DIR}/conf/nginx.conf
+>>>>>>> origin/master
 wget -c --no-check-certificate ${REMOTE_SRC_PATH}/rewrite.tar.gz && tar -zxvf rewrite.tar.gz
 mv -f rewrite ${TENGINE_INSTALL_DIR}/conf/ && unlink rewrite.tar.gz
 mkdir -p ${TENGINE_INSTALL_DIR}/conf/vhost
@@ -37,6 +42,13 @@ EOF
 sed -i "s@/home/wwwroot/default@$WWWROOT_DIR/default@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 sed -i "s@/home/wwwlogs@$WWWLOGS_DIR@g" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
 sed -i "s@^user www www@user $RUN_USER $RUN_USER@" ${TENGINE_INSTALL_DIR}/conf/nginx.conf
+<<<<<<< HEAD
+=======
+#timezone
+sed -i 's@^<value name="date.timezone">*</value>@<value name="date.timezone">Asia/Shanghai</value>@' /etc/php/php-fpm.conf
+#php error logs
+sed -i 's@^<value name="error_log">*</value>@<value name="error_log">/home/wwwlogs/php_error.log</value>@' /etc/php/php-fpm.conf
+>>>>>>> origin/master
 
 # logrotate nginx log
 cat > /etc/logrotate.d/nginx << EOF

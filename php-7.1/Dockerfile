@@ -47,7 +47,7 @@ RUN  buildDeps='\
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \
     tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar xzf tengine-${TENGINE_VERSION}.tar.gz && \
-# install tengine
+# install tengine with php:7.1.16
     cd tengine-${TENGINE_VERSION} && \
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc && \
     ./configure \

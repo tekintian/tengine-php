@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #!/bin/bash
+=======
+#!/bin/sh
+>>>>>>> origin/master
 set -e
 
 # reset memory
@@ -20,6 +24,7 @@ elif [ $Mem -gt 8000 ];then
     MEMORY_LIMIT=448
 fi
 
+<<<<<<< HEAD
 # optimize php-fpm
 if [ $Mem -le 3000 ];then
     sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/3/20))@" ${PHP_INSTALL_DIR}/etc/php-fpm.conf
@@ -56,5 +61,9 @@ fi
 
 source /etc/profile
 php-fpm
+=======
+. /etc/profile
+service php-fpm start
+>>>>>>> origin/master
 
 exec "$@"
