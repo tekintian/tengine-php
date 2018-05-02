@@ -1,4 +1,4 @@
-FROM tekintian/php:7.2.4
+FROM tekintian/php:7.2.5
 MAINTAINER Tekin Tian <tekintian@gmail.com>
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
