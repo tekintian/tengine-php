@@ -1,14 +1,14 @@
 FROM tekintian/php:5.2.17
-MAINTAINER Tekin Tian <tekintian@gmail.com>
+LABEL maintainer="TekinTian tekintian@gmail.com"
 
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
-    TENGINE_VERSION=2.2.2 \
+    TENGINE_VERSION=2.2.3 \
     PCRE_VERSION=8.42 \
 <<<<<<< HEAD
     OPENSSL_VERSION=1.0.2o \
     RUN_USER=www-data \
 =======
-    OPENSSL_VERSION=1.1.0h \
+    OPENSSL_VERSION=1.1.0j \
     RUN_USER=www \
 >>>>>>> origin/master
     WWWROOT_DIR=/home/wwwroot \
@@ -92,7 +92,7 @@ RUN  buildDeps='\
 =======
     cd /tmp/ && \
 >>>>>>> origin/master
-    wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+    wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget -c --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     wget -c --no-check-certificate http://tengine.taobao.org/download/tengine-${TENGINE_VERSION}.tar.gz && \
     tar xzf pcre-${PCRE_VERSION}.tar.gz && \

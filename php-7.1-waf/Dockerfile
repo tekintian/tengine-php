@@ -1,11 +1,11 @@
-FROM tekintian/php:7.1.17
-MAINTAINER Tekin Tian <tekintian@gmail.com>
+FROM tekintian/php:7.1.24
+LABEL maintainer="TekinTian tekintian@gmail.com"
 ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
-    TENGINE_VERSION=2.2.2 \
+    TENGINE_VERSION=2.2.3 \
     PCRE_VERSION=8.42 \
-    OPENSSL_VERSION=1.1.0h \
+    OPENSSL_VERSION=1.1.0j \
     LuaJIT_VERSION=2.0.5 \
-    LNM_VERSION=0.10.12rc2 \
+    LNM_VERSION=0.10.14rc3 \
     NDK_VERSION=0.3.1rc1 \
     RUN_USER=www \
     WWWROOT_DIR=/home/wwwroot \
@@ -15,7 +15,7 @@ ENV TENGINE_INSTALL_DIR=/usr/local/tengine \
 WORKDIR /tmp
 #
 #最新稳定版本openssl 
-# https://www.openssl.org/source/openssl-1.1.0g.tar.gz
+# https://www.openssl.org/source/openssl-1.1.0j.tar.gz
 # https://www.openssl.org/source/snapshot/
 #tengine http://tengine.taobao.org/download.html
 # Luajit
@@ -59,7 +59,7 @@ RUN  buildDeps='\
     export LUAJIT_LIB=/usr/local/luajit/lib && export LUAJIT_INC=/usr/local/luajit/include/luajit-2.0 && \
     cd /tmp/ && \
 # download related src
-    wget -c --no-check-certificate ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz && \
+    wget -c --no-check-certificate https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
 
     wget -c --no-check-certificate https://github.com/openresty/lua-nginx-module/archive/v${LNM_VERSION}.tar.gz -O  lua-nginx-module-${LNM_VERSION}.tar.gz && \
